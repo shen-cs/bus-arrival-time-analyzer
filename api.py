@@ -1,24 +1,28 @@
 """post data to server"""
 import requests
-import json
 from Bus import *
 
 def convertArrival(arrival):
 	return { 'time': arrival.arrivedTime.isoformat(), 'interval': arrival.interval }
 
-
-def convertStop(stop):
+# isInit: if to initialize, arrivals is empty
+def convertStop(stop, isInit):
 	arrivals = []
-	for i in xrange(len(stop.arrivals)): 
-		arrivals.append(convertArrival(stop.arrivals[i]))
-	return { 'stopName': stop.stopName, 'arrivals': arrivals[1:] }
+	for arrival in stop.arrivals: 
+		arrivals.append(convertArrival(arrival))
+	return { 'stopName': stop.stopName, 'arrivals': arrivals if isInit else arrivals[-1:] }
+	
 
-def convertStopList(stopList):
+def convertStopList(stopList, isInit):
 	sList = []
-	for i in xrange(len(stopList)):
-		sList.append(convertStop(stopList[i]))
+	for stop in stopList:
+		sList.append(convertStop(stop, isInit))
 	return { 'stopList': sList}
 
+def initializeServer(url, stopList):
+	payload = convertStopList(stopList, True)
+	res = requests.post(url, json=payload)
+
 def updateToServer(url, stopList):
-	payload = convertStopList(stopList)
+	payload = convertStopList(stopList, False)
 	res = requests.put(url, json=payload)

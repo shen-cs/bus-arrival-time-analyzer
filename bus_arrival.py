@@ -5,13 +5,18 @@ import requests
 from bs4 import BeautifulSoup
 from selenium import webdriver
 from Bus import *
-from api import updateToServer, convertStopList
+from api import initializeServer, updateToServer 
 
 PHANTOMJS_PATH = '/home/shen/Downloads/phantomjs-2.1.1-linux-x86_64/bin/phantomjs'
-URL = 'http://www.e-bus.gov.taipei/newmap/Tw/Map?rid=15112&sec=1'
+BUS_CODE = 11812
+DIRECTION = 1
+URL = 'http://www.e-bus.gov.taipei/newmap/Tw/Map?rid={}&sec={}'.format(BUS_CODE, DIRECTION)
 ID_PREFIX = "#etai_"
-BUS_NUM = 208
-SERVER_URL = 'http://localhost:8000/api/update/' + str(BUS_NUM)
+BUS_NUM = '15-'+ ('come' if (DIRECTION == 0) else 'go')
+BASE_URL = 'http://localhost:8000/api/'
+SERVER_POST_URL = BASE_URL + 'post/' + BUS_NUM
+SERVER_PUT_URL = BASE_URL + 'update/' + BUS_NUM
+
 
 driver = webdriver.PhantomJS(executable_path=PHANTOMJS_PATH, service_args=['--ignore-ssl-errors=true'])
 # url = raw_input("Please enter the url...\n")
@@ -21,14 +26,14 @@ url = URL
 stopList = []
 
 def loadPage(url):
-	global driver, soup, tag
-	driver.get(url)
-	pageSource = driver.page_source
-	soup = BeautifulSoup(pageSource, "lxml")
-	print 'refreshing...'
-  
+  print 'refreshing...'
+  global driver, soup, tag
+  driver.get(url)
+  pageSource = driver.page_source
+  soup = BeautifulSoup(pageSource, "lxml")
 
 def initialize():
+  print 'Initializing...'
   global stopList, soup
   loadPage(url)
   i = 0
@@ -40,6 +45,7 @@ def initialize():
      stopName = result[0].parent.parent.select('.b span')[0].get_text()
      stopList.append(Stop(stopId, stopName, None))
      i += 1
+  initializeServer(SERVER_POST_URL, stopList)
   time.sleep(3)
 
 
@@ -61,14 +67,14 @@ def update(stop, busDivList):
            stop.lastArrivedTime = datetime.now()
            stop.pushArrival(Arrival(datetime.now(), timedelta(0), busName))
 
+def cleanup():
+  for stop in stopList:
+    stop.cleanArrival()
+
 def log():
-  # for i in xrange(len(stopList)):
-  #   if len(stopList[i].arrivals) > 1:
-  #     print 'stop: '+ stopList[i].stopName
-  #     print stopList[i]
-  # print convertStopList(stopList)
-  print 'Uploading to {}...'.format(SERVER_URL)
-  updateToServer(SERVER_URL, stopList)
+  print 'Uploading to {}...'.format(SERVER_PUT_URL)
+  updateToServer(SERVER_PUT_URL, stopList)
+  cleanup()
   print 'Finished. Sleeping...'
 
 def run():
@@ -76,17 +82,17 @@ def run():
     while True:
        try:
            loadPage(url)
-           for i in xrange(len(stopList)):
-                stopId = stopList[i].id
+           for stop in stopList:
+                stopId = stop.id
                 result = soup.select(stopId)
                 if result == []:
                 	break
                 stopName = result[0].parent.parent.select('.b span')[0].get_text()
                 busDivList = result[0].select('div') # empty list if no bus arrives
-                update(stopList[i], busDivList)
+                update(stop, busDivList)
            log()
            # updateToServer(SERVER_URL, stopList)
-           time.sleep(30)
+           time.sleep(12)
 
        except ValueError:
            print "\nSome Error occurs. Please try again.\n"

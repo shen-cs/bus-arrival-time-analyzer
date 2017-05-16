@@ -1,4 +1,4 @@
-# srop class
+# stop class
 class Stop(object):
 	"""docstring for ClassName"""
 	def __init__(self, id, stopName, lastArrivedTime): 
@@ -9,6 +9,10 @@ class Stop(object):
 
 	def pushArrival(self, arrival):
 		self.arrivals.append(arrival)
+
+	def cleanArrival(self):
+		if len(self.arrivals) > 0:
+			self.arrivals = self.arrivals[:1];
 
 	def __repr__(self):
 		# return self.stopName # encoding problem... later fix it

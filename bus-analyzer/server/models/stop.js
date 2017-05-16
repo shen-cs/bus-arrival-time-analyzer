@@ -1,7 +1,7 @@
 import mongoose, { Schema } from 'mongoose';
 
 const stopSchema = Schema({
-	busNum: Number,
+	busNum: String,
 	stopName: String,
 	arrivals: []
 });
