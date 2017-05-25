@@ -9,7 +9,7 @@ export default class extends Component {
 		return(
 			<div>
 				<AppBar title="Bus arrival analyzer"
-				 	showMenuIconButton={false} 
+				 	showMenuIconButton={false} fullWidth
 				 	iconElementRight={<FlatButton label="home" onClick={() => browserHistory.push('/')}/>}/>
 				<ChartBox/>
 			</div>

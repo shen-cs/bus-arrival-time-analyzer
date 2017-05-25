@@ -3,6 +3,7 @@ const arrivalActionTypes = {
 	GET_ARRIVAL_INIT: 'GET_ARRIVAL_INIT',
 	GET_ARRIVAL_SUCCESS: 'GET_ARRIVAL_SUCCESS', 
 	GET_ARRIVAL_FAIL: 'GET_ARRIVAL_FAIL',
+	GET_TIMELINE_DATA: 'GET_TIMELINE_DATA',
 	GET_STOPNAMES_INIT: 'GET_STOPNAMES_INIT',
 	GET_STOPNAMES_SUCCESS: 'GET_STOPNAMES_SUCCESS',
 	GET_STOPNAMES_FAIL: 'GET_STOPNAMES_FAIL',
@@ -12,16 +13,17 @@ const arrivalActionTypes = {
 	GET_BUS_NUMS_FAIL: 'GET_BUS_NUMS_FAIL',
 };
 
-// const FETCH_URL = 'http://140.112.214.92:8000/api/';
-const FETCH_URL = 'http://localhost:8000/api/';
+const FETCH_URL = 'http://140.112.214.92:8000/api/';
+// const FETCH_URL = 'http://localhost:8000/api/';
 export const arrivalsActionCreator = {
 	getArrivals: ( busNum, stopName ) => {
 		return async (dispatch) => {
 			const url = FETCH_URL + busNum + '/' + stopName;
 			dispatch({ type: arrivalActionTypes.GET_ARRIVAL_INIT });
 			fetch(url).then((res) => res.json()).then((json) => {
-				let data = calcOccurrences(json[0].arrivals);
-				dispatch({ type: arrivalActionTypes.GET_ARRIVAL_SUCCESS, payload: data })
+				// let data = calcOccurrences(json[0].arrivals);
+				dispatch({ type: arrivalActionTypes.GET_ARRIVAL_SUCCESS, payload: json[0].arrivals });
+				// dispatch({ type: arrivalActionTypes.GET_TIMELINE_DATA, payload: json[0].arrivals });
 			})
 			.catch((res) => {
 				console.log('Get arrivals failed.');
@@ -66,7 +68,7 @@ export const arrivalsActionCreator = {
 	},
 };
 
-const initialState = { busNum: '15-go', stopName: '', stopNames: [], arrivals: [] };
+const initialState = { busNum: '15-go', stopName: '', stopNames: [], arrivals: []};
 const arrivalsReducer = (state = initialState, action) => {
 	const { type, payload } = action;
 	switch(type) {

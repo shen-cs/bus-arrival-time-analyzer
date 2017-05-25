@@ -1,13 +1,15 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { BarChart, Bar, ScatterChart, Scatter, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import '../css/chart.css';
 import { arrivalsActionCreator } from '../redux/arrivalsRedux';
+import { calcOccurrences } from '../util';
+import Timeline from './Timeline';
+import OccurrencesChart from './OccurrencesChart';
 // import Label from './Label';
 const mapStateToProps = (state) => ({
-	data: state.arrivals.arrivals,
+	data: state.arrivals.arrivals, // [{ interval: 10, time: ""}......]
 	busNum: state.arrivals.busNum,
 	stopNames: state.arrivals.stopNames,
 	stopName: state.arrivals.stopName
@@ -47,23 +49,16 @@ class ChartBox extends Component {
 		return(
 			<div className="div-container">
 				<div className="chart-container">
-					<ScatterChart width={700} height={400} margin={{top: 30, right: 120, bottom: 20, left: 20}}>
+					{/*<ScatterChart width={700} height={400} margin={{top: 30, right: 120, bottom: 20, left: 20}}>
 						<XAxis dataKey="interval" name="interval" unit=" mins" label="interval(mins)"/>
 						<YAxis dataKey="occurrences" name="occurrences" unit=" times" label="occurrences(times)"/>
-						<Scatter name="bus arrival" data={data} fill='#8884d8'/>
+						<Scatter name="bus arrival" data={calcOccurrences(data)} fill='#8884d8'/>
 						<CartesianGrid strokeDasharray="3 3"/>
 						<Tooltip/>
 						<Legend/>	
-					</ScatterChart>
-					{/*<BarChart width={700} height={400} margin={{top: 30, right: 120, bottom: 20, left: 20}}
-							  data={data.sort((a, b) => parseInt(a.interval, 10) - parseInt(b.interval, 10))}>
-						<XAxis dataKey="interval" unit=" mins" label="interval(mins)"/>
-						<YAxis dataKey="occurrences" unit=" times" label="occurrences(times)"/>
-						<Bar name="occurrences" dataKey="occurrences" fill='#8884d8'/>
-						<CartesianGrid strokeDasharray="3 3"/>
-						<Tooltip/>
-						<Legend/>
-					</BarChart>*/}
+					</ScatterChart>*/}
+					<Timeline data={data} />
+					<OccurrencesChart data={calcOccurrences(data)}/>
 				</div>
 				<div className="menu-container">
 					{/*<DropDownMenu maxHeight={300} style={{width: 300}} value={busNum}>
@@ -73,8 +68,8 @@ class ChartBox extends Component {
 						value={stopName} onChange={this.onStopNameChange}>
 						{stopNames.map(this.renderMenuItem)}
 					</SelectField>
+					
 				</div>
-				
 			</div>
 		)
 	}
