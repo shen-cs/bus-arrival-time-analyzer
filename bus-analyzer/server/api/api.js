@@ -1,6 +1,7 @@
 import express from 'express';
 import bodyParser from 'body-parser';
 import Stop from '../models/stop';
+import Bus from '../models/bus';
 const apiRoutes = express.Router();
 apiRoutes.use(bodyParser.json());
 apiRoutes.use(bodyParser.urlencoded({ extended: true }))
@@ -12,7 +13,6 @@ const convertArrivals = (arrivals) => {
 
 };
 apiRoutes.use(function(req, res, next) {
-	console.log('lala');
     res.header("Access-Control-Allow-Origin", "*");
     // res.header("Access-Control-Allow-Credentials", "true");
     // res.header("Access-Control-Allow-Headers", "Origin,Content-Type, Authorization, x-id, Content-Length, X-Requested-With");
@@ -29,6 +29,10 @@ apiRoutes.post('/post/:num', (req, res) => {
 			return;
 		}
 		else {
+			const bus = new Bus({ busNum: req.params.num });
+			bus.save((err) => {
+				if(err) throw err;
+			})
 			for(var i = 0; i < stopList.length; i++) {
 				convertArrivals(stopList[i].arrivals);
 				const stop = new Stop({
@@ -69,6 +73,13 @@ apiRoutes.put('/update/:num', (req, res) => {
 	res.json({ success: true });
 })
 
+apiRoutes.get('/buses', (req, res) => {
+	Bus.find({}, (err, buses) => {
+		if(err) throw err;
+		res.status(200).json(buses);
+	})
+})
+
 apiRoutes.get('/:num', (req, res) => {
 	Stop.find({ busNum: req.params.num }, (err, stops) => {
 		if(err) throw err;
@@ -84,8 +95,8 @@ apiRoutes.get('/:num/:stopName', (req, res) => {
 		res.json(stop);
 	})
 })
-apiRoutes.delete('/delete', (req, res) => {
-	Stop.deleteMany({}, () => {console.log('All deleted.')})
-	res.json({ success: true })
-})
+// apiRoutes.delete('/delete', (req, res) => {
+// 	Stop.deleteMany({}, () => {console.log('All deleted.')})
+// 	res.json({ success: true })
+// })
 export default apiRoutes;

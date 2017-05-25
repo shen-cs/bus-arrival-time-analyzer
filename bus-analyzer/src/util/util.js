@@ -8,3 +8,13 @@ export const calcOccurrences = (arrivals) => {
 	}
 	return data;
 };
+
+
+export const getBusNums = (list) => {
+	return list.map((item) => item.busNum);
+};
+
+export const getStopNames = (list) => {
+	return list.map((item) => item.stopName);
+}
+

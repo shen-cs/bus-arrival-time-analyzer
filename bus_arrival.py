@@ -98,6 +98,7 @@ def run():
            print "\nSome Error occurs. Please try again.\n"
        except KeyboardInterrupt:
            print '\nexiting...\n'
+           exit(-1)
 
 if __name__ == '__main__':
   initialize()

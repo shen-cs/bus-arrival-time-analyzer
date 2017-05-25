@@ -1,9 +1,9 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunk from 'redux-thunk';
-import arrivals from '../redux/arrivalsRedux';
+import busAnalyzerReducer from '../redux/';
 
 const store = createStore(
-	arrivals,
+	busAnalyzerReducer,
 	applyMiddleware(thunk)
 );
 export default store;
