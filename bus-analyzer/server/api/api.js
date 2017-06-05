@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import bodyParser from 'body-parser';
 import Stop from '../models/stop';
 import Bus from '../models/bus';
@@ -12,13 +13,8 @@ const convertArrivals = (arrivals) => {
 	}
 
 };
-apiRoutes.use(function(req, res, next) {
-    res.header("Access-Control-Allow-Origin", "*");
-    // res.header("Access-Control-Allow-Credentials", "true");
-    // res.header("Access-Control-Allow-Headers", "Origin,Content-Type, Authorization, x-id, Content-Length, X-Requested-With");
-    // res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-    next();
-});
+apiRoutes.use(cors());
+
 apiRoutes.post('/post/:num', (req, res) => {
 	console.log('Initializing bus', req.params.num);
 	let stopList = req.body.stopList;
@@ -57,7 +53,8 @@ apiRoutes.put('/update/:num', (req, res) => {
 	let stopList = req.body.stopList;
 	for(var i = 0; i < stopList.length; i++) {
 		convertArrivals(stopList[i].arrivals) //now arrivals is just one-length list
-		if(stopList[i].arrivals && stopList[i].arrivals.length === 1 && stopList[i].arrivals[0].interval !== 0) {
+		if(stopList[i].arrivals && stopList[i].arrivals.length === 1 && stopList[i].arrivals[0].interval !== -1 
+			&& stopList[i].arrivals[0].interval < 100) {
 			console.log('Updating', stopList[i].stopName);
 			Stop.findOneAndUpdate(
 				{ busNum: req.params.num, stopName: stopList[i].stopName },//conditions

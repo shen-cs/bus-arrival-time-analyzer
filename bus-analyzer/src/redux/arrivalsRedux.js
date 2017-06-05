@@ -1,4 +1,4 @@
-import { calcOccurrences, getStopNames, getBusNums } from '../util';
+import { getStopNames, getBusNums } from '../util';
 const arrivalActionTypes = {
 	GET_ARRIVAL_INIT: 'GET_ARRIVAL_INIT',
 	GET_ARRIVAL_SUCCESS: 'GET_ARRIVAL_SUCCESS', 
@@ -13,8 +13,9 @@ const arrivalActionTypes = {
 	GET_BUS_NUMS_FAIL: 'GET_BUS_NUMS_FAIL',
 };
 
-const FETCH_URL = 'http://140.112.214.92:8000/api/';
-// const FETCH_URL = 'http://localhost:8000/api/';
+// const FETCH_URL = 'http://163.28.17.108:8000/api/';
+// const FETCH_URL = 'http://140.112.214.92:8000/api/';
+const FETCH_URL = 'http://localhost:8000/api/';
 export const arrivalsActionCreator = {
 	getArrivals: ( busNum, stopName ) => {
 		return async (dispatch) => {
@@ -68,7 +69,7 @@ export const arrivalsActionCreator = {
 	},
 };
 
-const initialState = { busNum: '15-go', stopName: '', stopNames: [], arrivals: []};
+const initialState = { busNum: '15-1', stopName: '', stopNames: [], arrivals: []};
 const arrivalsReducer = (state = initialState, action) => {
 	const { type, payload } = action;
 	switch(type) {

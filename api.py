@@ -16,7 +16,8 @@ def convertStop(stop, isInit):
 def convertStopList(stopList, isInit):
 	sList = []
 	for stop in stopList:
-		sList.append(convertStop(stop, isInit))
+		if stop.toUpdate:
+			sList.append(convertStop(stop, isInit))
 	return { 'stopList': sList}
 
 def initializeServer(url, stopList):

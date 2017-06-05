@@ -7,7 +7,6 @@ import { arrivalsActionCreator } from '../redux/arrivalsRedux';
 import { calcOccurrences } from '../util';
 import Timeline from './Timeline';
 import OccurrencesChart from './OccurrencesChart';
-// import Label from './Label';
 const mapStateToProps = (state) => ({
 	data: state.arrivals.arrivals, // [{ interval: 10, time: ""}......]
 	busNum: state.arrivals.busNum,
@@ -49,14 +48,6 @@ class ChartBox extends Component {
 		return(
 			<div className="div-container">
 				<div className="chart-container">
-					{/*<ScatterChart width={700} height={400} margin={{top: 30, right: 120, bottom: 20, left: 20}}>
-						<XAxis dataKey="interval" name="interval" unit=" mins" label="interval(mins)"/>
-						<YAxis dataKey="occurrences" name="occurrences" unit=" times" label="occurrences(times)"/>
-						<Scatter name="bus arrival" data={calcOccurrences(data)} fill='#8884d8'/>
-						<CartesianGrid strokeDasharray="3 3"/>
-						<Tooltip/>
-						<Legend/>	
-					</ScatterChart>*/}
 					<Timeline data={data} />
 					<OccurrencesChart data={calcOccurrences(data)}/>
 				</div>

@@ -12,7 +12,7 @@ BUS_CODE = 11812
 DIRECTION = 1
 URL = 'http://www.e-bus.gov.taipei/newmap/Tw/Map?rid={}&sec={}'.format(BUS_CODE, DIRECTION)
 ID_PREFIX = "#etai_"
-BUS_NUM = '15-'+ ('come' if (DIRECTION == 0) else 'go')
+BUS_NUM = '15-'+ str(DIRECTION)
 BASE_URL = 'http://localhost:8000/api/'
 SERVER_POST_URL = BASE_URL + 'post/' + BUS_NUM
 SERVER_PUT_URL = BASE_URL + 'update/' + BUS_NUM
@@ -50,7 +50,7 @@ def initialize():
 
 
 def isDifferentBus(stop, busName):
-   lastBusName = stop.arrivals[-1].busName
+   lastBusName = stop.getLastArrivedBusName()
    return lastBusName != busName
 
 def update(stop, busDivList):
@@ -65,7 +65,10 @@ def update(stop, busDivList):
       else:
            print stop.stopName + ' has arrived.'
            stop.lastArrivedTime = datetime.now()
-           stop.pushArrival(Arrival(datetime.now(), timedelta(0), busName))
+           stop.pushArrival(Arrival(datetime.now(), -1, busName))
+
+   if stop.noArrival():
+      stop.toUpdate = False
 
 def cleanup():
   for stop in stopList:
@@ -74,6 +77,8 @@ def cleanup():
 def log():
   print 'Uploading to {}...'.format(SERVER_PUT_URL)
   updateToServer(SERVER_PUT_URL, stopList)
+  # for stop in stopList:
+  #   print stop
   cleanup()
   print 'Finished. Sleeping...'
 
